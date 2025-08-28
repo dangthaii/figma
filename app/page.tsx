@@ -16,6 +16,7 @@ export default function Home() {
   );
   const [input, setInput] = useState("");
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
+  const [isCreatingNewChat, setIsCreatingNewChat] = useState(false);
 
   const { projects } = useProjects();
   const { chats, createChat } = useChats(selectedProjectId);
@@ -28,10 +29,12 @@ export default function Home() {
     autoSelectFirstProject(projects, selectedProjectId, setSelectedProjectId);
   }, [projects, selectedProjectId]);
 
-  // Auto-select first chat when available
+  // Auto-select first chat when available (but not when creating new chat)
   useEffect(() => {
-    autoSelectFirstChat(chats, activeChatId, setActiveChatId);
-  }, [chats, activeChatId]);
+    if (!isCreatingNewChat) {
+      autoSelectFirstChat(chats, activeChatId, setActiveChatId);
+    }
+  }, [chats, activeChatId, isCreatingNewChat]);
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
@@ -41,6 +44,7 @@ export default function Home() {
       const newChat = await createChat.mutateAsync(input);
       if (newChat?.id) {
         setActiveChatId(newChat.id);
+        setIsCreatingNewChat(false); // Reset the flag
         await sendStreamingMessage(selectedProjectId, newChat.id, input);
       }
     } else {
@@ -51,6 +55,7 @@ export default function Home() {
   };
 
   const handleNewChat = () => {
+    setIsCreatingNewChat(true); // Set flag to prevent auto-selection
     setActiveChatId(null);
     setInput("");
     requestAnimationFrame(() => {
@@ -72,6 +77,7 @@ export default function Home() {
         activeChatId={activeChatId}
         setActiveChatId={setActiveChatId}
         setInput={setInput}
+        onNewChat={handleNewChat}
       />
 
       {/* Main chat area */}

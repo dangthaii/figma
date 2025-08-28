@@ -27,6 +27,7 @@ interface SidebarProps {
   activeChatId: string | null;
   setActiveChatId: (id: string | null) => void;
   setInput: (input: string) => void;
+  onNewChat: () => void;
 }
 
 export function Sidebar({
@@ -35,6 +36,7 @@ export function Sidebar({
   activeChatId,
   setActiveChatId,
   setInput,
+  onNewChat,
 }: SidebarProps) {
   const [open, setOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
@@ -50,22 +52,11 @@ export function Sidebar({
     setFigmaLink("");
   };
 
-  const handleNewChat = () => {
-    setActiveChatId(null);
-    setInput("");
-    requestAnimationFrame(() => {
-      const inputElement = document.querySelector(
-        'input[placeholder="Hỏi bất kỳ điều gì"]'
-      ) as HTMLInputElement;
-      inputElement?.focus();
-    });
-  };
-
   return (
     <aside className="border-r flex flex-col min-h-0 overflow-hidden">
       <div className="p-3 border-b flex items-center justify-between">
         <div className="text-sm font-medium">Chats</div>
-        <Button size="sm" variant="outline" onClick={handleNewChat}>
+        <Button size="sm" variant="outline" onClick={onNewChat}>
           New chat
         </Button>
       </div>
