@@ -14,7 +14,7 @@ export default function Header() {
         className="text-xl font-bold cursor-pointer"
         onClick={() => router.push("/")}
       >
-        Reading App
+        Figma App
       </h1>
       <div className="flex items-center gap-4">
         {user && (

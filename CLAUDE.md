@@ -110,6 +110,7 @@ export async function GET(
 
 ## CRITICAL WARNINGS
 
+- Please use @lib\gemini.ts to request to AI instead call directly
 - **NEVER use `prisma migrate reset --force`** - This deletes ALL database data permanently!
 - Never use any way that can remove all data in database
 - Using npx prisma db push or npx prisma db pull to migrate db, don't use npx prisma migrate dev

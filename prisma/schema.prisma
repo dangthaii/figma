@@ -17,5 +17,45 @@ model User {
   role               String? // "admin" or null
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
+  projects           Project[]
+}
+
+model Project {
+  id         String   @id @default(uuid())
+  name       String
+  figmaLink  String
+  context    Json?
+  ownerId    String
+  owner      User     @relation(fields: [ownerId], references: [id])
+  chats      Chat[]
+  files      ProjectFile[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([ownerId])
+}
+
+model Chat {
+  id         String   @id @default(uuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  title      String
+  messages   Json     // array of message objects; can be large
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([projectId])
+}
+
+model ProjectFile {
+  id         String   @id @default(uuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  name       String
+  type       String
+  url        String?
+  content    String?  // optional text content
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([projectId])
 }
 
