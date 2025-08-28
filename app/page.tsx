@@ -94,6 +94,8 @@ export default function Home() {
               messages={activeChat?.messages || []}
               streamingText={streamingText}
               isLoading={isLoading}
+              projectId={selectedProjectId}
+              chatId={activeChatId}
             />
             <MessageInput
               input={input}

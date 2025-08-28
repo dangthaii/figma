@@ -29,6 +29,7 @@ model Project {
   owner      User     @relation(fields: [ownerId], references: [id])
   chats      Chat[]
   files      ProjectFile[]
+  webDemos   WebDemo[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   @@index([ownerId])
@@ -40,6 +41,7 @@ model Chat {
   project    Project  @relation(fields: [projectId], references: [id])
   title      String
   messages   Json     // array of message objects; can be large
+  webDemos   WebDemo[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   @@index([projectId])
@@ -57,5 +59,23 @@ model ProjectFile {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   @@index([projectId])
+}
+
+model WebDemo {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  chatId      String
+  chat        Chat     @relation(fields: [chatId], references: [id])
+  name        String
+  description String?
+  htmlContent String   // HTML content of the demo
+  cssContent  String?  // CSS content (optional, can be inline)
+  isInlineCSS Boolean  @default(true) // whether CSS is inline or separate
+  metadata    Json?    // additional metadata like tags, features, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([projectId])
+  @@index([chatId])
 }
 
