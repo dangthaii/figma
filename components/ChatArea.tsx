@@ -56,20 +56,6 @@ export function ChatArea({
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     rehypePlugins={[rehypeHighlight]}
-                    components={{
-                      pre: ({ ...props }) => (
-                        <pre className="overflow-auto" {...props} />
-                      ),
-                      code: ({
-                        inline,
-                        ...props
-                      }: {
-                        inline?: boolean;
-                        [key: string]: unknown;
-                      }) => (
-                        <code className={inline ? "" : "block"} {...props} />
-                      ),
-                    }}
                   >
                     {message.content}
                   </ReactMarkdown>
