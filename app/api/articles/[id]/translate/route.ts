@@ -54,7 +54,7 @@ export async function POST(
     }
 
     // Create the prompt for Vietnamese translation with full context
-    let prompt = `
+    const prompt = `
 Bạn là một chuyên gia dịch thuật tiếng Việt. Hãy dịch đoạn văn được đánh dấu trong ngữ cảnh hoàn chình của bài viết.
 
 **TOÀN BỘ NGỮ CẢNH CỦA BÀI VIẾT:**
