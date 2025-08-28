@@ -1,8 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, Edit, Trash2 } from "lucide-react";
 import { Chat } from "@/hooks/useChats";
 import { UseMutationResult } from "@tanstack/react-query";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Button } from "@/components/ui/button";
 
 interface SidebarChatItemProps {
   chat: Chat;
@@ -16,6 +22,7 @@ interface SidebarChatItemProps {
     { chatId: string; title: string },
     unknown
   >;
+  deleteChat: UseMutationResult<void, Error, string, unknown>;
 }
 
 export function SidebarChatItem({
@@ -25,6 +32,7 @@ export function SidebarChatItem({
   onSelect,
   onRenamed,
   updateChatTitle,
+  deleteChat,
 }: SidebarChatItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(chat.title);
@@ -49,6 +57,13 @@ export function SidebarChatItem({
     setIsEditing(false);
     onRenamed();
   }
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm("Bạn có chắc chắn muốn xóa chat này?")) {
+      await deleteChat.mutateAsync(chat.id);
+    }
+  };
 
   return (
     <div
@@ -76,15 +91,41 @@ export function SidebarChatItem({
         <>
           <span className="flex-1 truncate">{chat.title}</span>
           <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              className="p-1 rounded hover:bg-muted"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsEditing(true);
-              }}
-            >
-              <MoreVertical className="size-4" />
-            </button>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <button
+                  className="p-1 rounded hover:bg-muted transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreVertical className="size-4" />
+                </button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-48 p-2" side="right" align="start">
+                <div className="space-y-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start h-8 px-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsEditing(true);
+                    }}
+                  >
+                    <Edit className="size-3 mr-2" />
+                    Đổi tên
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={handleDelete}
+                  >
+                    <Trash2 className="size-3 mr-2" />
+                    Xóa
+                  </Button>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           </div>
         </>
       )}

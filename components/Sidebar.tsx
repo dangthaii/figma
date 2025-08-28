@@ -43,7 +43,7 @@ export function Sidebar({
   const [figmaLink, setFigmaLink] = useState("");
 
   const { projects, createProject } = useProjects();
-  const { chats, updateChatTitle } = useChats(selectedProjectId);
+  const { chats, updateChatTitle, deleteChat } = useChats(selectedProjectId);
 
   const handleCreateProject = async () => {
     await createProject.mutateAsync({ name: projectName, figmaLink });
@@ -79,6 +79,7 @@ export function Sidebar({
               // Invalidation is handled in the hook
             }}
             updateChatTitle={updateChatTitle}
+            deleteChat={deleteChat}
           />
         ))}
       </div>
