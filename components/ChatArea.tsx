@@ -7,11 +7,17 @@ import { Button } from "@/components/ui/button";
 import { WebDemoPanel } from "@/components/WebDemoPanel";
 import { WebDemoNotification } from "@/components/WebDemoNotification";
 import { Monitor, X } from "lucide-react";
+import {
+  LoadingDots,
+  ChatMessageSkeleton,
+  TypingIndicator,
+} from "@/components/ui/loading";
 
 interface ChatAreaProps {
   messages: Message[];
   streamingText: string;
   isLoading: boolean;
+  chatLoading?: boolean;
   projectId: string | null;
   chatId: string | null;
 }
@@ -20,6 +26,7 @@ export function ChatArea({
   messages,
   streamingText,
   isLoading,
+  chatLoading = false,
   projectId,
   chatId,
 }: ChatAreaProps) {
@@ -51,7 +58,16 @@ export function ChatArea({
           </Button>
         </div>
 
-        {!messages?.length && !streamingText && (
+        {chatLoading ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center space-y-4">
+              <div className="w-8 h-8 border-2 border-current border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <div className="text-sm text-muted-foreground">
+                Đang tải chat...
+              </div>
+            </div>
+          </div>
+        ) : !messages?.length && !streamingText ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <h2 className="text-2xl font-semibold mb-2">
@@ -62,7 +78,7 @@ export function ChatArea({
               </p>
             </div>
           </div>
-        )}
+        ) : null}
 
         <div
           className="flex-1 min-h-0 overflow-y-auto pb-32"
@@ -112,17 +128,7 @@ export function ChatArea({
             {isLoading && !streamingText && (
               <div className="text-sm leading-6">
                 <div className="inline-block rounded-2xl px-4 py-2 bg-muted prose prose-sm dark:prose-invert max-w-none">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-foreground/60 rounded-full animate-bounce"></div>
-                    <div
-                      className="w-2 h-2 bg-foreground/60 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
-                    ></div>
-                    <div
-                      className="w-2 h-2 bg-foreground/60 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
-                  </div>
+                  <TypingIndicator />
                 </div>
               </div>
             )}

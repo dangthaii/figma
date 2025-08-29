@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plus, Mic, Waves } from "lucide-react";
+import { Plus, Mic, Waves, Loader2 } from "lucide-react";
 
 interface MessageInputProps {
   input: string;
@@ -58,7 +58,14 @@ export function MessageInput({
             onClick={onSend}
             disabled={!input.trim() || disabled}
           >
-            Gửi
+            {disabled ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Đang xử lý...</span>
+              </div>
+            ) : (
+              "Gửi"
+            )}
           </Button>
         </div>
       </div>

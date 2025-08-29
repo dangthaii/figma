@@ -9,7 +9,11 @@ export interface Project {
 export function useProjects() {
   const queryClient = useQueryClient();
 
-  const { data: projects } = useQuery<Project[]>({
+  const {
+    data: projects,
+    isLoading,
+    error,
+  } = useQuery<Project[]>({
     queryKey: ["projects"],
     queryFn: async () => {
       const res = await axiosClient.get("/projects");
@@ -29,6 +33,8 @@ export function useProjects() {
 
   return {
     projects,
+    isLoading,
+    error,
     createProject,
   };
 }

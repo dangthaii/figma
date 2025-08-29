@@ -19,7 +19,11 @@ export function useChat(
 ) {
   const queryClient = useQueryClient();
 
-  const { data: activeChat } = useQuery<ChatData>({
+  const {
+    data: activeChat,
+    isLoading,
+    error,
+  } = useQuery<ChatData>({
     queryKey: ["chat", selectedProjectId, activeChatId],
     enabled: !!selectedProjectId && !!activeChatId,
     queryFn: async () => {
@@ -43,6 +47,8 @@ export function useChat(
 
   return {
     activeChat,
+    isLoading,
+    error,
     invalidateChat,
   };
 }

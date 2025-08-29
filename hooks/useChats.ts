@@ -9,7 +9,11 @@ export interface Chat {
 export function useChats(selectedProjectId: string | null) {
   const queryClient = useQueryClient();
 
-  const { data: chats } = useQuery<Chat[]>({
+  const {
+    data: chats,
+    isLoading,
+    error,
+  } = useQuery<Chat[]>({
     queryKey: ["chats", selectedProjectId],
     enabled: !!selectedProjectId,
     queryFn: async () => {
@@ -66,6 +70,8 @@ export function useChats(selectedProjectId: string | null) {
 
   return {
     chats,
+    isLoading,
+    error,
     createChat,
     updateChatTitle,
     deleteChat,

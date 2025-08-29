@@ -9,6 +9,7 @@ import { useChats } from "@/hooks/useChats";
 import { useChat } from "@/hooks/useChat";
 import { useStreamingMessage } from "@/hooks/useStreamingMessage";
 import { autoSelectFirstProject, autoSelectFirstChat } from "@/utils/chatUtils";
+import { AuthGuard } from "@/components/AuthGuard";
 
 export default function Home() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
@@ -18,9 +19,16 @@ export default function Home() {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [isCreatingNewChat, setIsCreatingNewChat] = useState(false);
 
-  const { projects } = useProjects();
-  const { chats, createChat } = useChats(selectedProjectId);
-  const { activeChat } = useChat(selectedProjectId, activeChatId);
+  const { projects, isLoading: projectsLoading } = useProjects();
+  const {
+    chats,
+    createChat,
+    isLoading: chatsLoading,
+  } = useChats(selectedProjectId);
+  const { activeChat, isLoading: chatLoading } = useChat(
+    selectedProjectId,
+    activeChatId
+  );
   const { streamingText, isLoading, sendStreamingMessage } =
     useStreamingMessage();
 
@@ -69,44 +77,56 @@ export default function Home() {
   const hasProjects = (projects?.length || 0) > 0;
 
   return (
-    <div className="h-screen grid grid-cols-[260px_1fr] overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar
-        selectedProjectId={selectedProjectId}
-        setSelectedProjectId={setSelectedProjectId}
-        activeChatId={activeChatId}
-        setActiveChatId={setActiveChatId}
-        setInput={setInput}
-        onNewChat={handleNewChat}
-      />
+    <AuthGuard>
+      <div className="h-screen grid grid-cols-[260px_1fr] overflow-hidden">
+        {/* Sidebar */}
+        <Sidebar
+          selectedProjectId={selectedProjectId}
+          setSelectedProjectId={setSelectedProjectId}
+          activeChatId={activeChatId}
+          setActiveChatId={setActiveChatId}
+          setInput={setInput}
+          onNewChat={handleNewChat}
+        />
 
-      {/* Main chat area */}
-      <main className="flex flex-col min-h-0 overflow-hidden">
-        {!hasProjects ? (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-sm text-muted-foreground">
-              Bạn chưa có project nào. Tạo project mới để bắt đầu.
+        {/* Main chat area */}
+        <main className="flex flex-col min-h-0 overflow-hidden">
+          {projectsLoading ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-8 h-8 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                <div className="text-sm text-muted-foreground">
+                  Đang tải projects...
+                </div>
+              </div>
             </div>
-          </div>
-        ) : (
-          <>
-            <ChatArea
-              messages={activeChat?.messages || []}
-              streamingText={streamingText}
-              isLoading={isLoading}
-              projectId={selectedProjectId}
-              chatId={activeChatId}
-            />
-            <MessageInput
-              input={input}
-              setInput={setInput}
-              onSend={handleSendMessage}
-              onNewChat={handleNewChat}
-              disabled={isLoading}
-            />
-          </>
-        )}
-      </main>
-    </div>
+          ) : !hasProjects ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-sm text-muted-foreground">
+                Bạn chưa có project nào. Tạo project mới để bắt đầu.
+              </div>
+            </div>
+          ) : (
+            <>
+              <ChatArea
+                messages={activeChat?.messages || []}
+                streamingText={streamingText}
+                isLoading={isLoading}
+                chatLoading={chatLoading}
+                projectId={selectedProjectId}
+                chatId={activeChatId}
+              />
+              <MessageInput
+                input={input}
+                setInput={setInput}
+                onSend={handleSendMessage}
+                onNewChat={handleNewChat}
+                disabled={isLoading}
+              />
+            </>
+          )}
+        </main>
+      </div>
+    </AuthGuard>
   );
 }
