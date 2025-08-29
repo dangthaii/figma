@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { ChatArea } from "@/components/ChatArea";
 import { MessageInput } from "@/components/MessageInput";
@@ -44,7 +44,7 @@ export default function Home() {
     }
   }, [chats, activeChatId, isCreatingNewChat]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!input.trim()) return;
 
     if (!activeChatId) {
@@ -60,9 +60,16 @@ export default function Home() {
       await sendStreamingMessage(selectedProjectId, activeChatId, input);
     }
     setInput("");
-  };
+  }, [
+    input,
+    activeChatId,
+    selectedProjectId,
+    createChat,
+    sendStreamingMessage,
+    setInput,
+  ]);
 
-  const handleNewChat = () => {
+  const handleNewChat = useCallback(() => {
     setIsCreatingNewChat(true); // Set flag to prevent auto-selection
     setActiveChatId(null);
     setInput("");
@@ -72,7 +79,7 @@ export default function Home() {
       ) as HTMLInputElement;
       inputElement?.focus();
     });
-  };
+  }, [setActiveChatId, setInput]);
 
   const hasProjects = (projects?.length || 0) > 0;
 
